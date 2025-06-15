@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Spend Someone's Money</title>
+  <style>
+    :root {
+      --bg-light: #f4f4f4;
+      --text-light: #000;
+      --bg-dark: #121212;
+      --text-dark: #fff;
+      --primary: #008080;
+    }
+
+    body {
+      font-family: Arial, sans-serif;
+      background: var(--bg-light);
+      color: var(--text-light);
+      text-align: center;
+      transition: background 0.3s, color 0.3s;
+    }
+
+    .dark-mode {
+      background: var(--bg-dark);
+      color: var(--text-dark);
+    }
+
+    .money {
+      font-size: 30px;
+      margin: 20px;
+    }
+
+    .controls {
+      margin-bottom: 20px;
+    }
+
+    .item {
+      background: white;
+      border: 1px solid #ccc;
+      border-radius: 10px;
+      padding: 15px;
+      margin: 10px auto;
+      width: 300px;
+      box-shadow: 2px 2px 10px rgba(0,0,0,0.1);
+    }
+
+    .dark-mode .item {
+      background: #1e1e1e;
+      border-color: #333;
+    }
+
+    .item img {
+      width: 100px;
+      height: 100px;
+      object-fit: contain;
+      margin-bottom: 10px;
+    }
+
+    button {
+      margin: 5px;
+      padding: 10px 20px;
+      font-weight: bold;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      background: var(--primary);
+      color: white;
+    }
+
+    button:hover {
+      background: #005f5f;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>Spend Someone's Money</h1>
+  <div class="money" id="money">$100,000,000,000</div>
+  <div class="controls">
+    <button onclick="toggleDarkMode()">Toggle Dark Mode</button>
+    <button onclick="resetGame()">Reset</button>
+  </div>
+  <div id="items"></div>
+
+  <script>
+    let originalMoney = 100_000_000_000;
+    let money = originalMoney;
+
+    const items = [
+      { name: "Netflix Annual Plan", price: 180, img: "https://upload.wikimedia.org/wikipedia/commons/0/08/Netflix_2015_logo.svg" },
+      { name: "Amazon Prime Annual", price: 140, img: "https://upload.wikimedia.org/wikipedia/commons/f/f1/Prime_video_logo.png" },
+      { name: "Disney+ Annual", price: 100, img: "https://upload.wikimedia.org/wikipedia/commons/3/3e/Disney%2B_logo.svg" },
+      { name: "F1 Paddock Pass", price: 5000, img: "https://upload.wikimedia.org/wikipedia/commons/3/33/F1.svg" },
+      { name: "BTS VIP Concert Ticket", price: 1500, img: "https://upload.wikimedia.org/wikipedia/commons/2/20/BTS_logo.svg" },
+      { name: "PlayStation 5", price: 500, img: "https://upload.wikimedia.org/wikipedia/commons/4/4e/PlayStation_5_logo_and_wordmark.svg" },
+      { name: "Ferrari", price: 300000, img: "https://upload.wikimedia.org/wikipedia/commons/2/2d/Ferrari-Logo.svg" },
+      { name: "Gaming PC", price: 4000, img: "https://upload.wikimedia.org/wikipedia/commons/7/79/PC_Gamer_logo.png" },
+      { name: "Beach House", price: 2000000, img: "https://upload.wikimedia.org/wikipedia/commons/a/a1/Icon_home.svg" }
+    ];
+
+    const itemContainer = document.getElementById('items');
+    const moneyDisplay = document.getElementById('money');
+
+    items.forEach(item => {
+      item.quantity = 0;
+      const div = document.createElement('div');
+      div.className = "item";
+      div.innerHTML = `
+        <h2>${item.name}</h2>
+        <img src="${item.img}" alt="${item.name}" />
+        <p>Price: $${item.price.toLocaleString()}</p>
+        <p>Owned: <span id="${item.name.replace(/\s/g,'-')}-count">0</span></p>
+        <button onclick="buy('${item.name.replace(/\s/g,'-')}')">Buy</button>
+      `;
+      itemContainer.appendChild(div);
+      item.idSafe = item.name.replace(/\s/g,'-');
+    });
+
+    function buy(idSafe) {
+      const item = items.find(i => i.idSafe === idSafe);
+      if (money >= item.price) {
+        money -= item.price;
+        item.quantity++;
+        document.getElementById(`${idSafe}-count`).innerText = item.quantity;
+        moneyDisplay.innerText = `$${money.toLocaleString()}`;
+      } else {
+        alert("Not enough money!");
+      }
+    }
+
+    function toggleDarkMode() {
+      document.body.classList.toggle('dark-mode');
+    }
+
+    function resetGame() {
+      money = originalMoney;
+      moneyDisplay.innerText = `$${money.toLocaleString()}`;
+      items.forEach(item => {
+        item.quantity = 0;
+        document.getElementById(`${item.idSafe}-count`).innerText = 0;
+      });
+    }
+  </script>
+</body>
+</html>
